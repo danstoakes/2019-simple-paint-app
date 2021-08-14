@@ -2,6 +2,8 @@
 
 This is the original Paint application which was written to accompany the "How to Make a Paint App" series available <a href="https://youtube.com/playlist?list=PL1sWSxMsdTWP17fdJqt72sM82qlQWjzjl">here</a>.
 
+This application has a minimum SDK version of 15 and a target version of 28.
+
 Since the application's release, it has now been replaced by a more up-to-date version available <a href="https://github.com/danstoakes/SimplePaintApp">here</a>. This version features a custom colour picker, saving, sharing, etc, and builds upon many of the issues with the original. I highly recommend using this version, rather than the original.
 
 ## Installation

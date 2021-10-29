@@ -1,8 +1,12 @@
 package com.example.paint;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -24,7 +28,7 @@ import yuku.ambilwarna.AmbilWarnaDialog;
 public class MainActivity extends AppCompatActivity {
 
     private PaintView paintView;
-    private int defaultColor;
+    private int defaultColor = Color.RED;
     private int STORAGE_PERMISSION_CODE = 1;
 
     @Override
@@ -91,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void requestStoragePermission () {
+    private void requestStoragePermission() {
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 
@@ -103,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
-                            ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
 
                         }
                     })
@@ -121,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
         } else {
 
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
 
         }
 
@@ -146,8 +150,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
 
         switch (item.getItemId()) {
 
@@ -176,7 +182,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void openColourPicker () {
+    boolean eraserHasEnabled = false;
+
+    private void openColourPicker() {
+
+        if (eraserHasEnabled) {
+
+            defaultColor = Color.WHITE;
+
+        }
 
         AmbilWarnaDialog ambilWarnaDialog = new AmbilWarnaDialog(this, defaultColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
 
@@ -190,14 +204,29 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onOk(AmbilWarnaDialog dialog, int color) {
 
+                if (color != Color.WHITE) {
+
+                    if (eraserHasEnabled) {
+                        Toast.makeText(MainActivity.this, "Disable eraser!", Toast.LENGTH_LONG).show();
+                        eraserHasEnabled = false;
+                    }
+
+                }
                 defaultColor = color;
 
-                paintView.setColor(color);
+                if (defaultColor == Color.WHITE) {
+                    defaultColor = android.R.color.transparent;
+                    paintView.setColor(Color.WHITE);
+                    if (!eraserHasEnabled) {
+                        Toast.makeText(MainActivity.this, "Enable eraser!", Toast.LENGTH_LONG).show();
+                        eraserHasEnabled = true;
+                    }
+                } else
+                    paintView.setColor(defaultColor);
 
             }
 
         });
-
         ambilWarnaDialog.show(); // add
 
     }
